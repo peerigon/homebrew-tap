@@ -32,12 +32,17 @@ The upstream repo's release assets are public and can be linked directly.
 
 `brew install` downloads anonymously, so if the upstream project's repo is **private**, its release assets can't be linked directly — Homebrew can't authenticate to fetch them. The workaround: mirror the built binary as an asset on a release in this public repo, and point the formula at that instead.
 
+**Never overwrite an existing tap release's asset.** Homebrew caches downloads keyed by URL and assumes a given URL's content never changes. Reusing one release/tag across upstream versions and clobbering its asset can serve a stale cached file or a checksum mismatch to users who already downloaded the old version. Instead, create a new release per upstream version:
+
 1. Find the upstream project's latest release and download its binary asset (e.g. `gh release download <tag> --repo <owner>/<upstream-repo> --pattern "<asset-name>"`).
 2. Verify its checksum against the digest reported by the upstream release, if available.
-3. Upload (overwriting) that same asset file onto the existing release in this repo that the formula's `url` already references — reuse the existing tag/release here rather than creating a new one per upstream version (e.g. `gh release upload <existing-tap-tag> --repo peerigon/homebrew-tap <file> --clobber`). The `url` in the formula therefore stays pointed at the same tap release across upstream version bumps; only `sha256` and `version` change.
-4. Update `version` in the formula to the new upstream version.
-5. Update `sha256` in the formula to the new asset's checksum.
-6. Keep `install` and `caveats`/`test` blocks unless the upstream binary name or CLI behavior changed.
+3. Create a **new** release in this repo tagged uniquely per package and version — e.g. `<formula>-v<version>` such as `peer-tem-v1.3.0` — so tags don't collide across formulas in this tap, and upload the asset to it (e.g. `gh release create <formula>-v<version> --repo peerigon/homebrew-tap <file>`). Do not reuse or overwrite a prior release for the same formula.
+4. Update `url` in the formula to point at the new release tag/asset.
+5. Update `version` in the formula to the new upstream version.
+6. Update `sha256` in the formula to the new asset's checksum.
+7. Keep `install` and `caveats`/`test` blocks unless the upstream binary name or CLI behavior changed.
+
+Leave prior versions' releases in place — they provide rollback and an audit trail of what was actually shipped.
 
 This pattern applies to any formula in this tap whose upstream repo is private, not just one specific project — check each formula's `url` to see which case applies.
 
