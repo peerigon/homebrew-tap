@@ -2,8 +2,8 @@ class PeerTem < Formula
   desc "Peerigon Peer TEM [Travel Expense Manager]"
   homepage "https://github.com/peerigon/peer-tem"
   url "https://github.com/peerigon/homebrew-tap/releases/download/v1.0.0/peer-tem-macos-arm64.zip"
-  sha256 "d090e1230b858d24f37c4f47516f4a576c2d5d0fd4c2e7e917c62aaa7420fc24"
-  version "1.2.1"
+  sha256 "f6ff36cb655f4633367b258b4b70a0b661d9d798271940a9cf33f9937270208d"
+  version "1.3.0"
 
   def install
     bin.install "peer-tem-macos-arm64" => "peer-tem"
